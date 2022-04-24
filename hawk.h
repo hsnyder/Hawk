@@ -48,7 +48,10 @@ typedef struct hawk {
 } hawk;
 
 
-// Ingests a line from a character string and splits it into fields
+/*
+Ingests a line from a character string and splits it into fields
+Designed to work with fgets, i.e. expects there to be an unwanted newline character at the end of the input line.
+*/
 int hawk_nextline(hawk* h, char * line);
 
 
