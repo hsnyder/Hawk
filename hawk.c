@@ -22,49 +22,44 @@ hawk_err(hawk * h, const char * msg)
 int
 hawk_nextline(hawk * h, char * line)
 {
-	const size_t len = strlen(line);
+	const long len = strlen(line);
+	const long linemax = sizeof(h->rline);
 	
-	if (len >= sizeof(h->line)) {
+	if (len >= linemax) {
 		hawk_err(h, "Hawk: input line too long.");
 		return 0;
 	}
 
-	memset(h->flds, 0, sizeof(h->flds));
-	memset(h->line, 0, sizeof(h->line));
-	memcpy(h->line, line, len);
+	memset(h->rline, 0, sizeof(h->rline));
+	memset(h->mline, 0, sizeof(h->mline));
+	memset(h->f, 0, sizeof(h->f));
+
+	memcpy(h->rline, line, len);
+	memcpy(h->mline, line, len);
 
 	h->NF = 0;
-	unsigned li = 0; // line index
-	unsigned fs = 0; // field start
-	unsigned fl = 0; // field length
-
-	const size_t fmaxsz = sizeof(h->flds[0]);
+	unsigned char in_field = 0;
+	int li = 0;
 
 	switch (h->FS_tag) {
 
 	case HAWK_DEFAULT:
 		
 		while (li < len) {
-			
-
-			while (li < len && isspace(h->line[li])) { li++; }
-
-			fs = li;
-			fl = 0;
-
-			while (li < len && !isspace(h->line[li])) { li++; fl++; }
-
-			if (fl > 0 && fl < fmaxsz) {
-				memcpy(&h->flds[h->NF++], &h->line[fs], fl);
-			} else if (fl > 0) {
-				hawk_err(h, "Hawk: field too long.");
-				return 0;
+		
+			if (isspace(h->mline[li]) && in_field) {
+				in_field = 0;
+				h->mline[li++] = 0;
+				continue;
 			}
 
-			if(h->NF > sizeof(h->flds)/sizeof(h->flds[0])) {
-				hawk_err(h, "Hawk: too many fields.");
-				return 0;
+			if (!isspace(h->mline[li]) && !in_field) {
+				in_field = 1;
+				h->f[h->NF++] = li++;
+				continue;
 			}
+
+			li++;
 		}
 
 		break;
@@ -86,5 +81,15 @@ hawk_nextline(hawk * h, char * line)
 	return 1;
 }
 
+const char * 
+hawk_strfield(hawk* h, int i)
+{
+	if(i >= h->NF) 
+	{
+		hawk_err(h, "hawk_strfield: index out of range.");
+		return 0;
+	}
 
+	return &h->mline[h->f[i]];
+}
 

@@ -3,6 +3,10 @@
 
 #include <stddef.h>
 
+enum {
+	HAWK_MAX_LINE = 2400,
+};
+
 typedef enum hawk_septype {
 	HAWK_DEFAULT = 0,
 	HAWK_REGEX,
@@ -18,16 +22,17 @@ typedef enum hawk_septype {
 */
 typedef struct hawk {
 
-	size_t NR;  // init to zero, read only
-	size_t NF;  // init to zero, read only
+	long NR;  // init to zero, read only
+	long NF;  // init to zero, read only
 
 	hawk_septype FS_tag; // user initialize
 	char FS[20];         // user initialize
 
-	char line[2400];
-	char flds[40][120];
-
 	void (*error_callback) (const char *);
+	char  rline[HAWK_MAX_LINE];
+	char  mline[HAWK_MAX_LINE];
+	short f[HAWK_MAX_LINE];
+
 
 } hawk;
 
@@ -46,7 +51,7 @@ int hawk_nextline(hawk* h, char * line);
 
 int hawk_matchline(hawk* h, hawk_pattern p);
 
-char * hawk_strfield(hawk* h, int i);
+const char * hawk_strfield(hawk* h, int i);
 
 // don't check type, just use atof style conversions
 double hawk_numfield(hawk* h, int i);
