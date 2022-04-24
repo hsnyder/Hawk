@@ -32,3 +32,15 @@ int main (void) {
 	printf("%li\n",sum);
 }
 ```
+
+## Noteworthy limitations
+
+Currently all arrays are fixed size, leading to a maximum line length set at compile time. This should eventually be fixed.
+
+## Future work
+
+- Fix things in "noteworthy limitations".
+- Implement character-class field separators (e.g. split on ' ' or ',').
+- (?) Implement regular expression field separators.
+- (?) Hide/encapsulate members of the `hawk` struct that are intended for internal use only.
+- Add a third variant of the field accessor methods that allows the user to detect an invalid type or out of range field index without firing off the error callback. The error callback is useful when the programmer wants to print a message and bail on parsing the line, but if a type error in the data should be considered non-fatal, it's not the most convenient mechanism. 
