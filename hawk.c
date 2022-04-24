@@ -70,8 +70,23 @@ hawk_nextline(hawk * h, char * line)
 		break;
 
 	case HAWK_LITERAL:
-		hawk_err(h, "Hawk: literal FS not implemented.");
-		return 0;
+
+		if(strlen(h->FS) < 1) hawk_err(h, "Hawk: empty literal field separator.");
+
+		while (li < len) {
+			char * nextsep = strstr(h->mline + li, h->FS);
+
+			if (!nextsep) {
+				h->f[h->NF++] = li;
+				break;
+			}
+
+			*nextsep = 0;
+			h->f[h->NF++] = li;
+
+			li = (nextsep - h->mline) + strlen(h->FS);
+		}
+
 		break;
 
 	}
