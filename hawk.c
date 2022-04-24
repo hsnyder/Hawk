@@ -93,3 +93,46 @@ hawk_strfield(hawk* h, int i)
 	return &h->mline[h->f[i]];
 }
 
+
+double
+hawk_numfield(hawk* h, int i)
+{
+	return atof(hawk_strfield(h,i));
+}
+
+long
+hawk_intfield(hawk* h, int i)
+{
+	return atol(hawk_strfield(h,i));
+}
+
+double
+hawk_anumfield(hawk* h, int i)
+{
+	char * end = 0;
+	const char * s = hawk_strfield(h,i);
+	double out = strtod(s, &end);
+	if(end == s) {
+		char msg[100] = {};
+		snprintf(msg,100,"Field is not a number: %s", s);
+		hawk_err(h,msg);
+		return 0.0;
+	}
+	return out;
+}
+
+long 
+hawk_aintfield(hawk* h, int i)
+{
+	char * end = 0;
+	const char * s = hawk_strfield(h,i);
+	long out = strtol(s, &end, 10);
+	if(end == s) {
+		char msg[100] = {};
+		snprintf(msg,100,"Field is not a number: %s", s);
+		hawk_err(h,msg);
+		return 0;
+	}
+	return out;
+}
+
