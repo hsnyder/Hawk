@@ -22,7 +22,7 @@ hawk_err(hawk * h, const char * msg)
 int
 hawk_nextline(hawk * h, char * line)
 {
-	const long len = strlen(line);
+	const long len = strlen(line)-1; // minus one to get rid of the newline character
 	const long linemax = sizeof(h->rline);
 	
 	if (len >= linemax) {
