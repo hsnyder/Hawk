@@ -35,7 +35,8 @@ int main (void) {
 
 ## Noteworthy limitations
 
-Currently all arrays are fixed size, leading to a maximum line length set at compile time. This should eventually be fixed.
+- Currently all arrays are fixed size, leading to a maximum line length set at compile time.
+- Minor gotcha: the library assumes that the line fed to `hawk_nextline` is newline terminated, and it trims off that newline char. If the input line isn't newline terminated, then the last (potentially valid) char will get clipped off.
 
 ## Future work
 
