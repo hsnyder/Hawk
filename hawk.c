@@ -64,11 +64,6 @@ hawk_nextline(hawk * h, char * line)
 
 		break;
 
-	case HAWK_REGEX:
-		hawk_err(h, "Hawk: regex FS not implemented.");
-		return 0;
-		break;
-
 	case HAWK_LITERAL:
 
 		if(strlen(h->FS) < 1) hawk_err(h, "Hawk: empty literal field separator.");
@@ -99,6 +94,13 @@ hawk_nextline(hawk * h, char * line)
 const char * 
 hawk_strfield(hawk* h, int i)
 {
+	if(i >= h->NF) return "";
+	return &h->mline[h->f[i]];
+}
+
+const char * 
+hawk_astrfield(hawk* h, int i)
+{
 	if(i >= h->NF) 
 	{
 		hawk_err(h, "hawk_strfield: index out of range.");
@@ -125,7 +127,7 @@ double
 hawk_anumfield(hawk* h, int i)
 {
 	char * end = 0;
-	const char * s = hawk_strfield(h,i);
+	const char * s = hawk_astrfield(h,i);
 	double out = strtod(s, &end);
 	if(end == s) {
 		char msg[100] = {};
@@ -140,7 +142,7 @@ long
 hawk_aintfield(hawk* h, int i)
 {
 	char * end = 0;
-	const char * s = hawk_strfield(h,i);
+	const char * s = hawk_astrfield(h,i);
 	long out = strtol(s, &end, 10);
 	if(end == s) {
 		char msg[100] = {};

@@ -9,7 +9,6 @@ enum {
 
 typedef enum hawk_septype {
 	HAWK_DEFAULT = 0,
-	HAWK_REGEX,
 	HAWK_LITERAL,
 } hawk_septype;
 
@@ -53,11 +52,14 @@ int hawk_matchline(hawk* h, hawk_pattern p);
 
 const char * hawk_strfield(hawk* h, int i);
 
+// assert i in range
+const char * hawk_astrfield(hawk* h, int i);
+
 // don't check type, just use atof style conversions
 double hawk_numfield(hawk* h, int i);
 long   hawk_intfield(hawk* h, int i);
 
-// assert type
+// assert i in range, and assert type
 double hawk_anumfield(hawk* h, int i);
 long   hawk_aintfield(hawk* h, int i);
 
