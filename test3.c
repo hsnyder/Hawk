@@ -10,7 +10,7 @@ int main (void) {
 
 	while(fgets(line, sizeof(line), stdin) && hawk_nextline(&h,line)) {
 
-		long first = hawk_intfield(&h, 0);
+		long first = hawk_int(&h, 0);
 
 
 		if(first > 1) {

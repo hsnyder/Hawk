@@ -10,7 +10,7 @@ int main (void) {
 
 		printf("Line: %s\n", h.rline);
 		for(int i = 0; i < h.NF; i++){
-			printf("Field '%s'\n", hawk_strfield(&h, i));
+			printf("Field '%s'\n", hawk_str(&h, i));
 		}
 
 	}

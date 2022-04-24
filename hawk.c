@@ -92,18 +92,18 @@ hawk_nextline(hawk * h, char * line)
 }
 
 const char * 
-hawk_strfield(hawk* h, int i)
+hawk_str(hawk* h, int i)
 {
 	if(i >= h->NF) return "";
 	return &h->mline[h->f[i]];
 }
 
 const char * 
-hawk_astrfield(hawk* h, int i)
+hawk_astr(hawk* h, int i)
 {
 	if(i >= h->NF) 
 	{
-		hawk_err(h, "hawk_strfield: index out of range.");
+		hawk_err(h, "hawk_astr: index out of range.");
 		return 0;
 	}
 
@@ -112,26 +112,26 @@ hawk_astrfield(hawk* h, int i)
 
 
 double
-hawk_numfield(hawk* h, int i)
+hawk_num(hawk* h, int i)
 {
-	return atof(hawk_strfield(h,i));
+	return atof(hawk_str(h,i));
 }
 
 long
-hawk_intfield(hawk* h, int i)
+hawk_int(hawk* h, int i)
 {
-	return atol(hawk_strfield(h,i));
+	return atol(hawk_str(h,i));
 }
 
 double
-hawk_anumfield(hawk* h, int i)
+hawk_anum(hawk* h, int i)
 {
 	char * end = 0;
-	const char * s = hawk_astrfield(h,i);
+	const char * s = hawk_astr(h,i);
 	double out = strtod(s, &end);
 	if(end == s) {
 		char msg[100] = {};
-		snprintf(msg,100,"Field is not a number: %s", s);
+		snprintf(msg,100,"hawk_anum: Field is not a number: %s", s);
 		hawk_err(h,msg);
 		return 0.0;
 	}
@@ -139,14 +139,14 @@ hawk_anumfield(hawk* h, int i)
 }
 
 long 
-hawk_aintfield(hawk* h, int i)
+hawk_aint(hawk* h, int i)
 {
 	char * end = 0;
-	const char * s = hawk_astrfield(h,i);
+	const char * s = hawk_astr(h,i);
 	long out = strtol(s, &end, 10);
 	if(end == s) {
 		char msg[100] = {};
-		snprintf(msg,100,"Field is not a number: %s", s);
+		snprintf(msg,100,"hawk_aint: Field is not a number: %s", s);
 		hawk_err(h,msg);
 		return 0;
 	}

@@ -13,55 +13,89 @@ typedef enum hawk_septype {
 } hawk_septype;
 
 /*
-	User should initialize the FS and FS_tag fields,
-	and set the rest to zero.
+	User should initialize this struct to zero, except for (optionally):
+	- FS_tag
+	- FS
+	- error_callback
 
-	After initialization, those same fields CAN be modified,
-	but the expected useage is to treat the whole struct as read-only.
+	FS is the field separator, which is a string.
+	Currently, two field separator types are supported (specified via FS_tag):
+
+	- HAWK_DEFAULT means to ignore the value of FS and use any amount of adjacent whitespace as the field separator.
+	  In this mode, leading spaces are ignored and will not result in an empty field at index 0.
+
+	- HAWK_LITERAL means to use the literal string provided in FS as the field separator.
+	  In this mode, all separators are honoured, so if the lines starts with a separator, the first field will be empty.
+
+	If an error callback is not provided, the default action is to print to stderr and terminate.
+	  
 */
 typedef struct hawk {
 
-	long NR;  // init to zero, read only
-	long NF;  // init to zero, read only
+	long NR;  // Number of records (number of lines seen thusfar). init to zero, read only
+	long NF;  // Number of fields on the current line.             init to zero, read only
 
-	hawk_septype FS_tag; // user initialize
-	char FS[20];         // user initialize
+	hawk_septype FS_tag; // Field separator type. init to zero or initialize with desired value
+	char FS[20];         // Field separator.      init to zero or initialize with desired value
 
-	void (*error_callback) (const char *);
-	char  rline[HAWK_MAX_LINE];
-	char  mline[HAWK_MAX_LINE];
-	short f[HAWK_MAX_LINE];
+	void (*error_callback) (const char *); // init to zero or initialize with desired value
+
+	char  rline[HAWK_MAX_LINE]; // read only (contains an exact copy of the last input line)
+	char  mline[HAWK_MAX_LINE]; // internal use, don't read or write
+	short f[HAWK_MAX_LINE];     // internal use, don't read or write
 
 
 } hawk;
 
-typedef struct hawk_pattern {
 
-	int is_valid;
-
-} hawk_pattern;
-
-hawk_pattern hawk_mkpattern(const char * str);
-
-// 'strong type' version, do actual type checking.
-hawk_pattern hawk_smkpattern(const char * str);
-
+// Ingests a line from a character string and splits it into fields
 int hawk_nextline(hawk* h, char * line);
 
-int hawk_matchline(hawk* h, hawk_pattern p);
 
-const char * hawk_strfield(hawk* h, int i);
 
-// assert i in range
-const char * hawk_astrfield(hawk* h, int i);
 
-// don't check type, just use atof style conversions
-double hawk_numfield(hawk* h, int i);
-long   hawk_intfield(hawk* h, int i);
 
-// assert i in range, and assert type
-double hawk_anumfield(hawk* h, int i);
-long   hawk_aintfield(hawk* h, int i);
+
+/* 
+Returns the (0-based) i-th field from the current line. 
+Returns empty if i out of range.
+*/
+const char * hawk_str(hawk* h, int i);
+
+/* 
+Returns the (0-based) i-th field from the current line, interpreted as a double. 
+Returns 0.0 if i is out of range, or if the field couldn't be converted.
+*/
+double hawk_num(hawk* h, int i);
+
+
+/* 
+Returns the (0-based) i-th field from the current line, interpreted as a long. 
+Returns 0 if i is out of range, or if the field couldn't be converted.
+*/
+long   hawk_int(hawk* h, int i);
+
+
+// The "a" prefix means "assert"
+// -----------------------------
+
+/* 
+Returns the (0-based) i-th field from the current line. 
+Triggers error callback and returns NULL if i out of range.
+*/
+const char * hawk_astr(hawk* h, int i);
+
+/* 
+Returns the (0-based) i-th field from the current line, interpreted as a double.
+Triggers error callback and returns 0.0 if i out of range.
+*/
+double hawk_anum(hawk* h, int i);
+
+/* 
+Returns the (0-based) i-th field from the current line, interpreted as a long.
+Triggers error callback and returns 0 if i out of range.
+*/
+long   hawk_aint(hawk* h, int i);
 
 
 #endif

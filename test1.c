@@ -10,9 +10,9 @@ int main (void) {
 
 		printf("Line: %s\n", h.rline);
 		for(int i = 0; i < h.NF; i++){
-			printf("Field '%s'\n", hawk_strfield(&h, i));
-			if(i == 0) printf("Numeric value: %f\n", hawk_anumfield(& h,i));
-			if(i == 0) printf("Integer value: %li\n", hawk_aintfield(& h,i));
+			printf("Field '%s'\n", hawk_str(&h, i));
+			if(i == 0) printf("Numeric value: %f\n", hawk_anum(& h,i));
+			if(i == 0) printf("Integer value: %li\n", hawk_aint(& h,i));
 		}
 
 	}
