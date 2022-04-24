@@ -23,7 +23,7 @@ int main (void) {
 
 	while (fgets(line, sizeof(line), stdin) && hawk_nextline(&h,line)) {
 
-		long f1 = hawk_int(&h, 0);
+		long f1 = hawk_int(&h, 0); // get the first field (zero based index)
 
 		if (f1 > 3) { sum += f1; }
 
